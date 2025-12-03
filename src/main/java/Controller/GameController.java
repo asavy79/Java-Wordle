@@ -1,14 +1,16 @@
 package Controller;
 
-
 import View.BoardDisplayer;
-import Wordle.Board;
-import Wordle.WordleGame;
+import Wordle.*;
 
+/**
+ * Controller: Mediates between Model and View
+ * Uses Command pattern for game actions
+ */
 public class GameController {
 
-    public WordleGame game;
-    public BoardDisplayer view;
+    private final WordleGame game;
+    private final BoardDisplayer view;
 
     public GameController(WordleGame game, BoardDisplayer view) {
         this.game = game;
@@ -16,14 +18,49 @@ public class GameController {
     }
 
     public void resetGame() {
-        game.resetGame();
+        GameCommand resetCommand = new ResetGameCommand(game);
+        resetCommand.execute();
+        updateView();
     }
 
-    public Boolean playTurn(String input) {
-        return game.playTurn(input);
+    public boolean makeGuess(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return false;
+        }
+        
+        String upperInput = input.toUpperCase().trim();
+        
+        if (!game.getValidator().isValid(upperInput)) {
+            return false;
+        }
+        
+        GameCommand guessCommand = new MakeGuessCommand(game, upperInput);
+        guessCommand.execute();
+        updateView();
+        
+        return game.getState() instanceof WonState;
+    }
+    
+    public String validateGuess(String input) {
+        if (input == null || input.trim().isEmpty()) {
+            return "Please enter a word";
+        }
+        String upperInput = input.toUpperCase().trim();
+        if (!game.getValidator().isValid(upperInput)) {
+            return game.getValidator().getValidationMessage(upperInput);
+        }
+        return null; // Valid
     }
 
-    public Board getBoard() {
-        return game.getBoard();
+    public void updateView() {
+        view.displayBoard(game.getBoard());
+    }
+
+    public WordleGame getGame() {
+        return game;
+    }
+
+    public BoardDisplayer getView() {
+        return view;
     }
 }

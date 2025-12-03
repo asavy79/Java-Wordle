@@ -22,6 +22,10 @@ dependencies {
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
+application {
+    mainClass.set("org.wordle_project.Main")
+}
+
 tasks.test {
     useJUnitPlatform()
 }

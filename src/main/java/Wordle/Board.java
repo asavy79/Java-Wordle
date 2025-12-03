@@ -1,16 +1,20 @@
 package Wordle;
 
-import View.BoardDisplayer;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Model: Represents the game board with all guesses
+ * Uses Strategy pattern for letter evaluation
+ */
 public class Board {
 
     private final List<List<LetterGuess>> board;
+    private final LetterEvaluator evaluator;
 
-    public Board() {
+    public Board(LetterEvaluator evaluator) {
         this.board = new ArrayList<>();
+        this.evaluator = evaluator;
     }
 
     public void addWord(String word, String targetWord) {
@@ -21,24 +25,18 @@ public class Board {
         List<LetterGuess> row = new ArrayList<>();
 
         for (int i = 0; i < guessedWord.length(); i++) {
-            Character guessedChar = guessedWord.charAt(i);
-            Character targetChar = targetWord.charAt(i);
-
-            if (guessedChar == targetChar) {
-                row.add(new LetterGuess(guessedChar, LetterStatus.CORRECT_POSITION));
-            } else if (targetWord.contains(guessedChar.toString())) {
-                row.add(new LetterGuess(guessedChar, LetterStatus.INCLUDED));
-            } else {
-                row.add(new LetterGuess(guessedChar, LetterStatus.INCORRECT));
-            }
+            char guessedChar = guessedWord.charAt(i);
+            LetterStatus status = evaluator.evaluateLetter(guessedChar, i, guessedWord, targetWord);
+            row.add(new LetterGuess(guessedChar, status));
         }
         return row;
     }
 
-
-    public void reset() {}
+    public void reset() {
+        board.clear();
+    }
 
     public List<List<LetterGuess>> getBoard() {
-        return board;
+        return new ArrayList<>(board);
     }
 }

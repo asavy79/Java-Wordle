@@ -1,36 +1,48 @@
 package Wordle;
 
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * Model: Core game logic
+ * Uses State pattern for game states
+ * Uses Observer pattern for notifications
+ * Uses Strategy pattern for validation and evaluation
+ */
 public class WordleGame {
 
     private final Board board;
     private final Random random;
     private final Integer maxGuesses;
     private final List<String> wordBank;
+    private final WordValidator validator;
+    private final List<GameObserver> observers;
+    
     private String targetWord;
     private Integer guessCount;
-
+    private GameState state;
 
     public static class GameBuilder {
 
         private static final Integer DEFAULT_MAX_GUESSES = 6;
-        private static final List<String> DEFAULT_WORDBANK = List.of("APPLE", "BLIND", "SHEET", "CRUSH", "RELAX");
 
         private Board board;
         private Random random;
         private Integer maxGuesses;
         private List<String> wordBank;
+        private LetterEvaluator evaluator;
+        private WordValidator validator;
 
         public GameBuilder() {
             this.board = null;
             this.random = null;
             this.maxGuesses = null;
             this.wordBank = null;
-        };
+            this.evaluator = null;
+            this.validator = null;
+        }
 
         public GameBuilder setBoard(Board board) {
             this.board = board;
@@ -52,38 +64,53 @@ public class WordleGame {
             return this;
         }
 
-        public WordleGame build() {
+        public GameBuilder setEvaluator(LetterEvaluator evaluator) {
+            this.evaluator = evaluator;
+            return this;
+        }
 
-            if(board == null) {
-                board = new Board();
+        public GameBuilder setValidator(WordValidator validator) {
+            this.validator = validator;
+            return this;
+        }
+
+        public WordleGame build() {
+            if (board == null) {
+                if (evaluator == null) {
+                    evaluator = new StandardWordleEvaluator();
+                }
+                board = new Board(evaluator);
             }
-            if(random == null) {
+            if (random == null) {
                 random = new Random();
             }
             if (maxGuesses == null) {
                 maxGuesses = DEFAULT_MAX_GUESSES;
             }
-
             if (wordBank == null) {
-                wordBank = DEFAULT_WORDBANK;
+                throw new IllegalArgumentException("Word bank must be provided");
             }
-            else {
-                for(String word : wordBank) {
-                    if(word.length() != 5) {
-                        throw new IllegalArgumentException("Word length should be 5");
-                    }
+            // Validate all words in word bank are 5 letters
+            for (String word : wordBank) {
+                if (word.length() != 5) {
+                    throw new IllegalArgumentException("All words in word bank must be exactly 5 letters. Found: " + word);
                 }
             }
-            return new WordleGame(board, maxGuesses, wordBank, random);
+            if (validator == null) {
+                validator = new StandardWordValidator(5);
+            }
+            return new WordleGame(board, maxGuesses, wordBank, random, evaluator, validator);
         }
     }
 
-
-    private WordleGame(Board board, Integer maxGuesses, List<String> wordBank, Random random) {
+    WordleGame(Board board, Integer maxGuesses, List<String> wordBank, Random random,
+               LetterEvaluator evaluator, WordValidator validator) {
         this.maxGuesses = maxGuesses;
         this.random = random;
         this.board = board;
         this.wordBank = wordBank;
+        this.validator = validator;
+        this.observers = new ArrayList<>();
         resetGame();
     }
 
@@ -95,24 +122,97 @@ public class WordleGame {
         board.reset();
         this.targetWord = getRandomWord();
         this.guessCount = 0;
+        this.state = new PlayingState();
+        notifyObserversReset();
     }
 
-    public Boolean playTurn(String guess) {
-        if(Objects.equals(guessCount, maxGuesses)) {
+    public boolean processGuess(String guess) {
+        if (guess == null) {
             return false;
         }
-        else {
-            guessCount++;
-            board.addWord(guess, targetWord);
-            return checkWin(guess);
+        String upperGuess = guess.toUpperCase();
+        
+        if (!validator.isValid(upperGuess)) {
+            return false;
         }
+        
+        if (!state.canMakeGuess()) {
+            return false;
+        }
+        
+        guessCount++;
+        board.addWord(upperGuess, targetWord);
+        boolean won = checkWin(upperGuess);
+        
+        notifyObserversGuess(upperGuess);
+        
+        if (won) {
+            setState(new WonState());
+        } else if (guessCount >= maxGuesses) {
+            setState(new LostState(targetWord));
+        }
+        
+        notifyObserversStateChanged();
+        return won;
+    }
+
+    public void setState(GameState newState) {
+        this.state = newState;
+        notifyObserversStateChanged();
+    }
+
+    public GameState getState() {
+        return state;
     }
 
     public Board getBoard() {
         return board;
     }
 
-    private Boolean checkWin(String word) {
+    public Integer getGuessCount() {
+        return guessCount;
+    }
+
+    public Integer getMaxGuesses() {
+        return maxGuesses;
+    }
+
+    public String getTargetWord() {
+        return targetWord;
+    }
+
+    public WordValidator getValidator() {
+        return validator;
+    }
+
+    private boolean checkWin(String word) {
         return Objects.equals(word, targetWord);
+    }
+
+    // Observer Pattern methods
+    public void addObserver(GameObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(GameObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObserversStateChanged() {
+        for (GameObserver observer : observers) {
+            observer.onGameStateChanged(this);
+        }
+    }
+
+    private void notifyObserversGuess(String guess) {
+        for (GameObserver observer : observers) {
+            observer.onGuessMade(this, guess);
+        }
+    }
+
+    private void notifyObserversReset() {
+        for (GameObserver observer : observers) {
+            observer.onGameReset(this);
+        }
     }
 }
