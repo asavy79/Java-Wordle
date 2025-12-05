@@ -35,33 +35,11 @@ public class TestObserver implements GameObserver {
         resetCount++;
     }
 
-    public List<GameState> getStateChanges() {
-        return new ArrayList<>(stateChanges);
-    }
-
-    public List<String> getGuesses() {
-        return new ArrayList<>(guesses);
-    }
-
-    public List<WordleGame> getGamesFromGuesses() {
-        return new ArrayList<>(gamesFromGuesses);
-    }
-
-    public int getResetCount() {
-        return resetCount;
-    }
-
-    public int getStateChangeCount() {
-        return stateChanges.size();
-    }
 
     public int getGuessCount() {
         return guesses.size();
     }
 
-    public GameState getLastStateChange() {
-        return stateChanges.isEmpty() ? null : stateChanges.get(stateChanges.size() - 1);
-    }
 
     public String getLastGuess() {
         return guesses.isEmpty() ? null : guesses.get(guesses.size() - 1);

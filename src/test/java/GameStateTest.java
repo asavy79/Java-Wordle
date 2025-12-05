@@ -85,8 +85,9 @@ public class GameStateTest {
             }
         }
 
-        char[] chars = targetWord.toCharArray();
-        chars[0] = (char) ((chars[0] - 'A' + 1) % 26 + 'A');
-        return new String(chars);
+        // This case is unreachable in practice. The return statement is made for type consistency
+        return null;
+
     }
+
 }
