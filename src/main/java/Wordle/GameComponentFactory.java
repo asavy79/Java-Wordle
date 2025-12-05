@@ -1,5 +1,10 @@
 package Wordle;
 
+import Wordle.LetterEvaluator.LetterEvaluator;
+import Wordle.LetterEvaluator.StandardLetterEvaluator;
+import Wordle.WordEvaluator.StandardWordValidator;
+import Wordle.WordEvaluator.WordValidator;
+
 import java.util.List;
 import java.util.Random;
 
@@ -24,7 +29,7 @@ public class GameComponentFactory {
     }
     
     public static LetterEvaluator createEvaluator() {
-        return new StandardWordleEvaluator();
+        return new StandardLetterEvaluator();
     }
     
     public static WordValidator createValidator(int wordLength) {

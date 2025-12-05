@@ -1,4 +1,4 @@
-package Wordle;
+package Wordle.WordEvaluator;
 
 /**
  * Strategy Pattern: Standard word validator that checks word length
@@ -16,13 +16,11 @@ public class StandardWordValidator implements WordValidator {
             return false;
         }
         String upperWord = word.toUpperCase().trim();
-        
-        // Check length
+
         if (upperWord.length() != wordLength) {
             return false;
         }
-        
-        // Check it's only letters
+
         return upperWord.matches("[A-Z]+");
     }
     

@@ -23,7 +23,6 @@ public class Main {
     );
     
     public static void main(String[] args) {
-        // Launch JavaFX application
         Application.launch(WordleJavaFXView.class, args);
     }
     
@@ -32,10 +31,8 @@ public class Main {
      * Called from JavaFX application thread after view is created
      */
     public static void initializeGame(WordleJavaFXView view) {
-        // Use Dependency Injection container to wire everything
         DependencyContainer container = new DependencyContainer(WORD_BANK, 6, view);
-        
-        // Set controller in view
+
         WordleJavaFXView.setController(container.getController());
     }
 }

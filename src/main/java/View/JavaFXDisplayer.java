@@ -24,7 +24,6 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
     private static final int MAX_COLS = 5;
 
     public JavaFXDisplayer() {
-        // Initialize JavaFX if not already done
         if (!Platform.isFxApplicationThread()) {
             Platform.startup(() -> {
             });
@@ -35,22 +34,19 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
     public void start(Stage stage) {
         this.primaryStage = stage;
 
-        // Create the main layout
+
         VBox root = new VBox(10);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
 
-        // Create title
         Label title = new Label("WORDLE");
         title.setStyle("-fx-font-size: 32px; -fx-font-weight: bold; -fx-text-fill: #333;");
 
-        // Create the board grid
         boardGrid = new GridPane();
         boardGrid.setAlignment(Pos.CENTER);
         boardGrid.setHgap(5);
         boardGrid.setVgap(5);
 
-        // Initialize empty board
         initializeEmptyBoard();
 
         root.getChildren().addAll(title, boardGrid);
@@ -61,7 +57,6 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
         stage.setResizable(false);
         stage.show();
 
-        // Display the current board if one exists
         if (currentBoard != null) {
             updateBoardDisplay();
         }
@@ -135,7 +130,6 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
 
             List<List<LetterGuess>> board = currentBoard.getBoard();
 
-            // Display filled rows
             for (int row = 0; row < board.size() && row < MAX_ROWS; row++) {
                 List<LetterGuess> currentRow = board.get(row);
                 for (int col = 0; col < currentRow.size() && col < MAX_COLS; col++) {
@@ -143,14 +137,12 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
                     boardGrid.add(cell, col, row);
                 }
 
-                // Fill remaining columns in this row with empty cells if needed
                 for (int col = currentRow.size(); col < MAX_COLS; col++) {
                     Label cell = createEmptyCell();
                     boardGrid.add(cell, col, row);
                 }
             }
 
-            // Fill remaining rows with empty cells
             for (int row = board.size(); row < MAX_ROWS; row++) {
                 for (int col = 0; col < MAX_COLS; col++) {
                     Label cell = createEmptyCell();
@@ -165,7 +157,6 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
         currentBoard = board;
 
         if (primaryStage == null) {
-            // Launch JavaFX application if not already running
             Platform.runLater(() -> {
                 try {
                     Stage stage = new Stage();
@@ -175,7 +166,6 @@ public class JavaFXDisplayer extends Application implements BoardDisplayer {
                 }
             });
         } else {
-            // Update existing display
             updateBoardDisplay();
         }
     }

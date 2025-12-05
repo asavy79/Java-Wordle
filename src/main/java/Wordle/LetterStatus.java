@@ -7,10 +7,7 @@ public enum LetterStatus {
     CORRECT_POSITION,
     INCORRECT,
     INCLUDED;
-    
-    /**
-     * Polymorphic method to get color representation
-     */
+
     public String getColorCode() {
         if (this == CORRECT_POSITION) {
             return "#6aaa64"; // Green

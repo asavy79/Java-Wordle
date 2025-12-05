@@ -1,4 +1,6 @@
-package Wordle;
+package Wordle.LetterEvaluator;
+
+import Wordle.LetterStatus;
 
 /**
  * Strategy Pattern: Interface for different letter evaluation strategies

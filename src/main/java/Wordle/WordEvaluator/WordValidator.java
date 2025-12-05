@@ -1,4 +1,4 @@
-package Wordle;
+package Wordle.WordEvaluator;
 
 /**
  * Strategy Pattern: Interface for word validation strategies

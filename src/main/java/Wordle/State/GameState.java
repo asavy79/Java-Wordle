@@ -1,4 +1,6 @@
-package Wordle;
+package Wordle.State;
+
+import Wordle.WordleGame;
 
 /**
  * State Pattern: Interface for game states

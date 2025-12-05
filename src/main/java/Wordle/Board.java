@@ -1,5 +1,7 @@
 package Wordle;
 
+import Wordle.LetterEvaluator.LetterEvaluator;
+
 import java.util.ArrayList;
 import java.util.List;
 

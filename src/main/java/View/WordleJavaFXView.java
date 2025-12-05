@@ -2,6 +2,9 @@ package View;
 
 import Controller.GameController;
 import Wordle.*;
+import Wordle.State.GameState;
+import Wordle.State.LostState;
+import Wordle.State.WonState;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -16,7 +19,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,39 +51,31 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
     @Override
     public void start(Stage stage) {
         this.primaryStage = stage;
-        
-        // Initialize game with dependency injection
+
         org.wordle_project.Main.initializeGame(this);
-        
-        // Create the main layout
+
         VBox root = new VBox(15);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
         root.setStyle("-fx-background-color: #ffffff;");
-        
-        // Create title
+
         Label title = new Label("WORDLE");
         title.setStyle("-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #333;");
-        
-        // Status label
+
         statusLabel = new Label("Enter your guess!");
         statusLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #666;");
-        
-        // Current guess display
+
         currentGuessLabel = new Label("");
         currentGuessLabel.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #333;");
         currentGuessLabel.setPrefHeight(30);
-        
-        // Create the board grid
+
         boardGrid = new GridPane();
         boardGrid.setAlignment(Pos.CENTER);
         boardGrid.setHgap(5);
         boardGrid.setVgap(5);
-        
-        // Initialize empty board
+
         initializeEmptyBoard();
-        
-        // Reset button
+
         resetButton = new Button("New Game");
         resetButton.setStyle("-fx-font-size: 14px; -fx-padding: 8 16; -fx-background-color: #6aaa64; -fx-text-fill: white;");
         resetButton.setOnAction(e -> {
@@ -97,8 +91,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
         buttonBox.getChildren().add(resetButton);
         
         root.getChildren().addAll(title, statusLabel, currentGuessLabel, boardGrid, buttonBox);
-        
-        // Set up keyboard input
+
         root.setFocusTraversable(true);
         root.requestFocus();
         root.setOnKeyPressed(this::handleKeyPress);
@@ -108,8 +101,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
         stage.setScene(scene);
         stage.setResizable(false);
         stage.show();
-        
-        // Request focus for keyboard input
+
         root.requestFocus();
     }
     
@@ -132,7 +124,6 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
             }
         } else if (code == KeyCode.ENTER) {
             if (currentGuess.length() == MAX_COLS) {
-                // Validate first to show error message if invalid
                 String validationError = controller.validateGuess(currentGuess);
                 if (validationError != null) {
                     statusLabel.setText(validationError);
@@ -140,12 +131,10 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
                     currentGuess = "";
                     updateCurrentGuessDisplay();
                 } else {
-                    // Make the guess - this will process it and notify observers
                     boolean won = controller.makeGuess(currentGuess);
                     currentGuess = "";
                     updateCurrentGuessDisplay();
-                    
-                    // Force immediate board update (observers should also update, but this ensures it)
+
                     Platform.runLater(() -> {
                         updateBoardDisplay();
                     });
@@ -206,8 +195,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
         Label cell = new Label(String.valueOf(letterGuess.getLetter()).toUpperCase());
         cell.setPrefSize(CELL_SIZE, CELL_SIZE);
         cell.setAlignment(Pos.CENTER);
-        
-        // Use polymorphism - no switch statement!
+
         LetterStatus status = letterGuess.getStatus();
         String backgroundColor = status.getColorCode();
         String textColor = status.getTextColor();
@@ -227,8 +215,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
         if (boardGrid == null || controller == null) {
             return;
         }
-        
-        // Ensure we're on JavaFX thread
+
         if (Platform.isFxApplicationThread()) {
             updateBoardDisplayInternal();
         } else {
@@ -245,23 +232,20 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
         
         Board board = controller.getGame().getBoard();
         List<List<LetterGuess>> boardData = board.getBoard();
-        
-        // Display filled rows
+
         for (int row = 0; row < boardData.size() && row < MAX_ROWS; row++) {
             List<LetterGuess> currentRow = boardData.get(row);
             for (int col = 0; col < currentRow.size() && col < MAX_COLS; col++) {
                 Label cell = createLetterCell(currentRow.get(col));
                 boardGrid.add(cell, col, row);
             }
-            
-            // Fill remaining columns in this row with empty cells if needed
+
             for (int col = currentRow.size(); col < MAX_COLS; col++) {
                 Label cell = createEmptyCell();
                 boardGrid.add(cell, col, row);
             }
         }
-        
-        // Fill remaining rows with empty cells
+
         for (int row = boardData.size(); row < MAX_ROWS; row++) {
             for (int col = 0; col < MAX_COLS; col++) {
                 Label cell = createEmptyCell();
@@ -274,8 +258,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
     public void displayBoard(Board board) {
         updateBoardDisplay();
     }
-    
-    // Observer Pattern implementation
+
     @Override
     public void onGameStateChanged(WordleGame game) {
         Platform.runLater(() -> {

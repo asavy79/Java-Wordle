@@ -1,5 +1,14 @@
 package Wordle;
 
+import Wordle.LetterEvaluator.LetterEvaluator;
+import Wordle.LetterEvaluator.StandardLetterEvaluator;
+import Wordle.State.GameState;
+import Wordle.State.LostState;
+import Wordle.State.PlayingState;
+import Wordle.State.WonState;
+import Wordle.WordEvaluator.StandardWordValidator;
+import Wordle.WordEvaluator.WordValidator;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -77,7 +86,7 @@ public class WordleGame {
         public WordleGame build() {
             if (board == null) {
                 if (evaluator == null) {
-                    evaluator = new StandardWordleEvaluator();
+                    evaluator = new StandardLetterEvaluator();
                 }
                 board = new Board(evaluator);
             }
@@ -90,7 +99,6 @@ public class WordleGame {
             if (wordBank == null) {
                 throw new IllegalArgumentException("Word bank must be provided");
             }
-            // Validate all words in word bank are 5 letters
             for (String word : wordBank) {
                 if (word.length() != 5) {
                     throw new IllegalArgumentException("All words in word bank must be exactly 5 letters. Found: " + word);
@@ -189,7 +197,6 @@ public class WordleGame {
         return Objects.equals(word, targetWord);
     }
 
-    // Observer Pattern methods
     public void addObserver(GameObserver observer) {
         observers.add(observer);
     }

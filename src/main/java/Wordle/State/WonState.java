@@ -1,14 +1,11 @@
-package Wordle;
+package Wordle.State;
+
+import Wordle.WordleGame;
 
 /**
- * State Pattern: Player has lost the game (ran out of guesses)
+ * State Pattern: Player has won the game
  */
-public class LostState implements GameState {
-    private final String targetWord;
-    
-    public LostState(String targetWord) {
-        this.targetWord = targetWord;
-    }
+public class WonState implements GameState {
     
     @Override
     public boolean canMakeGuess() {
@@ -22,7 +19,7 @@ public class LostState implements GameState {
     
     @Override
     public String getStateMessage() {
-        return "Game Over! The word was: " + targetWord;
+        return "Congratulations! You won!";
     }
     
     @Override

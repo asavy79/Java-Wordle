@@ -1,4 +1,6 @@
-package Wordle;
+package Wordle.Command;
+
+import Wordle.WordleGame;
 
 /**
  * Command Pattern: Command to reset the game
@@ -17,7 +19,7 @@ public class ResetGameCommand implements GameCommand {
     
     @Override
     public void undo() {
-        // Reset cannot be undone
+        // Undo is not supported in this version of Wordle
     }
 }
 

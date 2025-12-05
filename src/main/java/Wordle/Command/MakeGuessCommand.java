@@ -1,4 +1,6 @@
-package Wordle;
+package Wordle.Command;
+
+import Wordle.WordleGame;
 
 /**
  * Command Pattern: Command to make a guess in the game
@@ -23,7 +25,7 @@ public class MakeGuessCommand implements GameCommand {
     
     @Override
     public void undo() {
-        // Wordle doesn't support undo, but we implement for pattern completeness
+        // Players cannot undo in wordle. This is just included for consistency with the command pattern
     }
 }
 

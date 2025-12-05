@@ -1,4 +1,4 @@
-package Wordle;
+package Wordle.Command;
 
 /**
  * Command Pattern: Interface for game commands

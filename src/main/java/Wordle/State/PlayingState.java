@@ -1,4 +1,6 @@
-package Wordle;
+package Wordle.State;
+
+import Wordle.WordleGame;
 
 /**
  * State Pattern: Game is in progress, player can make guesses
