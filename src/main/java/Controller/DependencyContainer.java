@@ -16,14 +16,11 @@ public class DependencyContainer {
     private final GameController controller;
     
     public DependencyContainer(List<String> wordBank, int maxGuesses, BoardDisplayer view) {
-        // Use Factory pattern to create game
         this.game = GameComponentFactory.createGame(wordBank, maxGuesses);
         this.view = view;
-        
-        // Inject dependencies into controller
+
         this.controller = new GameController(game, view);
-        
-        // Set up observer pattern
+
         if (view instanceof GameObserver) {
             game.addObserver((GameObserver) view);
         }

@@ -19,6 +19,7 @@ import java.util.Random;
  * Uses State pattern for game states
  * Uses Observer pattern for notifications
  * Uses Strategy pattern for validation and evaluation
+ * The builder pattern is implemented as an additional method of constructing a game
  */
 public class WordleGame {
 
@@ -138,13 +139,14 @@ public class WordleGame {
         if (guess == null) {
             return false;
         }
-        String upperGuess = guess.toUpperCase();
-        
-        if (!validator.isValid(upperGuess)) {
+
+        if (!state.canMakeGuess()) {
             return false;
         }
-        
-        if (!state.canMakeGuess()) {
+
+        String upperGuess = guess.toUpperCase();
+
+        if (!validator.isValid(upperGuess)) {
             return false;
         }
         
@@ -207,7 +209,7 @@ public class WordleGame {
 
     private void notifyObserversStateChanged() {
         for (GameObserver observer : observers) {
-            observer.onGameStateChanged(this);
+            observer.onGameStateChanged(state);
         }
     }
 
@@ -219,7 +221,7 @@ public class WordleGame {
 
     private void notifyObserversReset() {
         for (GameObserver observer : observers) {
-            observer.onGameReset(this);
+            observer.onGameReset();
         }
     }
 }

@@ -3,7 +3,6 @@ package org.wordle_project;
 import Controller.DependencyContainer;
 import View.WordleJavaFXView;
 import javafx.application.Application;
-import javafx.application.Platform;
 
 import java.util.List;
 

@@ -260,9 +260,8 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
     }
 
     @Override
-    public void onGameStateChanged(WordleGame game) {
+    public void onGameStateChanged(GameState state) {
         Platform.runLater(() -> {
-            GameState state = game.getState();
             statusLabel.setText(state.getStateMessage());
             
             if (state instanceof WonState) {
@@ -292,7 +291,7 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
     }
     
     @Override
-    public void onGameReset(WordleGame game) {
+    public void onGameReset() {
         Platform.runLater(() -> {
             currentGuess = "";
             updateCurrentGuessDisplay();
