@@ -1,5 +1,7 @@
 # Java-Wordle
 
+Team Members: Manav Shah and Alex Savard
+
 This document identifies and explains the 5 design patterns implemented in the Wordle game.
 
 ## 1. Strategy Pattern
