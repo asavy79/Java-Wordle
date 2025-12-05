@@ -17,7 +17,12 @@ public class StandardLetterEvaluator implements LetterEvaluator {
         }
 
         Map<Character, Integer> targetCounts = countLetters(target);
-        Map<Character, Integer> guessCounts = countLetters(guess);
+
+        int targetOccurrences = targetCounts.getOrDefault(letter, 0);
+
+        if (targetOccurrences == 0) {
+            return LetterStatus.INCORRECT;
+        }
 
         int correctPositionCount = 0;
         for (int i = 0; i < guess.length(); i++) {
@@ -33,12 +38,6 @@ public class StandardLetterEvaluator implements LetterEvaluator {
             }
         }
 
-        int targetOccurrences = targetCounts.getOrDefault(letter, 0);
-        
-        if (targetOccurrences == 0) {
-            return LetterStatus.INCORRECT;
-        }
-
         int availableYellows = targetOccurrences - correctPositionCount;
         
         if (wrongPositionCount < availableYellows) {
@@ -47,6 +46,7 @@ public class StandardLetterEvaluator implements LetterEvaluator {
             return LetterStatus.INCORRECT;
         }
     }
+
     
     private Map<Character, Integer> countLetters(String word) {
         Map<Character, Integer> counts = new HashMap<>();

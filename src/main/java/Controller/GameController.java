@@ -46,6 +46,7 @@ public class GameController {
     }
     
     public String validateGuess(String input) {
+        // Will return null if the guess is valid
         if (input == null || input.trim().isEmpty()) {
             return "Please enter a word";
         }
@@ -53,7 +54,7 @@ public class GameController {
         if (!game.getValidator().isValid(upperInput)) {
             return game.getValidator().getValidationMessage(upperInput);
         }
-        return null; // Valid
+        return null;
     }
 
     public void updateView() {

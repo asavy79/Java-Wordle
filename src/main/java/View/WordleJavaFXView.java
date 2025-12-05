@@ -279,8 +279,6 @@ public class WordleJavaFXView extends Application implements BoardDisplayer, Gam
     @Override
     public void onGuessMade(WordleGame game, String guess) {
         Platform.runLater(() -> {
-            // Guess was already validated before being processed
-            // Show remaining guesses
             int remaining = game.getMaxGuesses() - game.getGuessCount();
             if (remaining > 0) {
                 statusLabel.setText("Guesses remaining: " + remaining);

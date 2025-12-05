@@ -108,12 +108,11 @@ public class WordleGame {
             if (validator == null) {
                 validator = new StandardWordValidator(5);
             }
-            return new WordleGame(board, maxGuesses, wordBank, random, evaluator, validator);
+            return new WordleGame(board, maxGuesses, wordBank, random, validator);
         }
     }
 
-    WordleGame(Board board, Integer maxGuesses, List<String> wordBank, Random random,
-               LetterEvaluator evaluator, WordValidator validator) {
+    WordleGame(Board board, Integer maxGuesses, List<String> wordBank, Random random, WordValidator validator) {
         this.maxGuesses = maxGuesses;
         this.random = random;
         this.board = board;
